@@ -7,7 +7,7 @@ create table users (
     user_id int generated always as identity primary key,                --PK
     first_name char(10), 
     last_name char(10), 
-    e_mail varchar(50), 
+    e_mail varchar, 
     phone char(10)
 );
 
@@ -109,7 +109,7 @@ create table participates (
     contest_id int references contest(contest_id),            --FK
     team_id int references team(team_id),                     --FK
     points_gained int,
-    prize_won int,
+    prize_won varchar(30),
     primary key(contest_id, team_id)
 );
 
