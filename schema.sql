@@ -1,121 +1,120 @@
--- STRONG ENTITIES
+-- Creating database
+drop database gamer_paradise;
+create database gamer_paradise;
+\c gamer_paradise
 
-create table product_supplier (
-    int supplier_id generated always as identity,            --PK
-    char(10) supplier_phone,
-    varchar(20) supplier_name,
-    char(30) country_of_origin
+create table users (
+    user_id int generated always as identity primary key,                --PK
+    first_name char(10), 
+    last_name char(10), 
+    e_mail varchar(50), 
+    phone char(10)
 );
 
-create table user (
-    int user_id generated always as identity,                --PK
-    char(10) first_name, 
-    char(10) last_name, 
-    varchar e_mail, 
-    char(10) phone
+create table product_supplier (
+    supplier_id int generated always as identity primary key,            --PK
+    supplier_phone char(10),
+    supplier_name varchar(20),
+    country_of_origin char(30)
 );
 
 create table product (
-    int product_id generated always as identity,             --PK
-    int supplier_id references product_supplier.supplier_id, --FK
-    numeric(10, 2) price,
-    numeric(5,1) rating,
-    varchar(50) description,
-    varchar(10) type
+    product_id int generated always as identity primary key,             --PK
+    supplier_id int references product_supplier(supplier_id), --FK
+    price numeric(10, 2),
+    rating numeric(5, 1),
+    description varchar(50),
+    type varchar(10)
 );
 
 create table offers (
-    int offer_id generated always as identity,               --PK
-    varchar(50) offer_description
+    offer_id int generated always as identity primary key,               --PK
+    offer_description varchar(50)
 );
 
 create table cart (
-    int cart_id generated always as identity,                --PK
-    int user_id references user.user_id,                     --FK
+    cart_id int generated always as identity primary key,                --PK
+    user_id int references users(user_id)                                --FK
 );
 
 create table complaint (
-    int complaint_id generated always as identity,           --PK
-    int user_id references user.user_id,                     --FK
-    varchar(50), complaint_description,
-    timestamp complaint_date
+    complaint_id int generated always as identity primary key,           --PK
+    user_id int references users(user_id),                     --FK
+    complaint_description varchar(50),
+    complaint_date timestamp
 );
 
 create table team (
-    int team_id generated always as identity,                --PK
-    int total_points
-);
-
-create table contest (
-    int contest_id generated always as identity,             --PK
-    varchar(30) game_name references game.game_name,         --FK
-    varchar(50) contest_description, 
-    timestamp start_date,
-    timestamp end_date
-);
-
-create table payment (
-    int payment_id generated always as identity,             --PK
-    int cart_id references cart.cart_id,                     --FK
-    varchar(10) payment_mode,
-    timestamp payment_date,
-    int amount_paid
-);
-
--- WEAK ENTITIES
-
-create table accessory (
-    varchar(30) accessory_name generated always as identity, --PK
-    int product_id references product.product_id,            --FK
-    int length,
-    int breadth,
-    int width,
-    int quantity,
-    varchar(10) sub_category
+    team_id int generated always as identity primary key,                --PK
+    total_points int
 );
 
 create table game (
-    varchar(30) game_name,                                   --PK
-    int product_id references product.product_id,            --FK
-    varchar(20) genre,
-    varchar(50) specifications,
-    varchar(10) platform,
-    timestamp release_date
+    game_name varchar(30) primary key,                                   --PK
+    product_id int references product(product_id),            --FK
+    genre varchar(20),
+    specifications varchar(50),
+    platform varchar(10),
+    release_date timestamp
+);
+
+create table contest (
+    contest_id int generated always as identity primary key,             --PK
+    game_name varchar(30) references game(game_name),         --FK
+    contest_description varchar(50), 
+    start_date timestamp,
+    end_date timestamp
+);
+
+create table payment (
+    payment_id int generated always as identity primary key,             --PK
+    cart_id int references cart(cart_id),                     --FK
+    payment_mode varchar(10),
+    payment_date timestamp,
+    amount_paid int
+);
+
+create table accessory (
+    accessory_name varchar(30) primary key,                               --PK
+    product_id int references product(product_id),            --FK
+    length int,
+    breadth int,
+    width int,
+    quantity int,
+    sub_category varchar(10)
 );
 
 create table cart_item (
-    int product_id references product.product_id,            --FK
-    int cart_id references cart.cart_id,                     --FK
-    timestamp date_added, 
-    int quantity_wished,
+    product_id int references product(product_id),            --FK
+    cart_id int references cart(cart_id),                     --FK
+    date_added timestamp, 
+    quantity_wished int,
     primary key(product_id, cart_id)
 );
 
--- Relation/Attribute tables
-
 create table product_offers (
-    int product_id references product.product_id,            --FK
-    int offer_id references offers.offer_id,                 --FK
-    timestamp end_time,
+    product_id int references product(product_id),            --FK
+    offer_id int references offers(offer_id),                 --FK
+    end_time timestamp,
     primary key(product_id, offer_id)
 );
 
 create table address (
-    int user_id references user.user_id,                     --FK
-    varchar(50) address,
+    user_id int references users(user_id),                     --FK
+    address varchar(50),
     primary key(user_id, address)
 );
 
 create table participates (
-    int contest_id references contest.contest_id,            --FK
-    int team_id references team.team_id,                     --FK
-    int points_gained,
-    int prize_won,
+    contest_id int references contest(contest_id),            --FK
+    team_id int references team(team_id),                     --FK
+    points_gained int,
+    prize_won int,
     primary key(contest_id, team_id)
 );
 
 create table belongs_to (
-    int user_id references user.user_id,                     --FK 
-    int team_id references team.team_id,                     --FK
+    user_id int references users(user_id),                     --FK 
+    team_id int references team(team_id),                     --FK
     primary key(user_id, team_id)
 );
