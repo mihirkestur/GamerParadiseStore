@@ -61,7 +61,7 @@ create table game (
 create table contest (
     contest_id int generated always as identity primary key,             --PK
     game_name varchar(30) references game(game_name),         --FK
-    contest_description varchar(50), 
+    contest_description varchar, 
     start_date timestamp,
     end_date timestamp
 );

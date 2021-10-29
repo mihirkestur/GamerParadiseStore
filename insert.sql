@@ -1,3 +1,16 @@
+/*
+TODO
+Use triggers for product id going to games and accessories
+On delete and on update
+What do you want to display on the front end?
+Aggregate, group by and order by,
+In not in exist, complex queries
+Transaction (No need concurrency)
+Create multiple users and show updates in one user displayed in the other user
+While creating a user, give permissions accoringly (specific attribute or the entire table)
+Create view and give permission to the user (in case we need to give a subset of attributes permissions)
+*/
+
 insert into users(first_name, last_name, e_mail, phone) values ('Fame1', 'Lname1', 'mohalk@gmail.com', 7825780817);
 insert into users(first_name, last_name, e_mail, phone) values ('Fame2', 'Lname2', 'mohalk@gmail.com', 7825780817);
 insert into users(first_name, last_name, e_mail, phone) values ('Fame3', 'Lname3', 'mohalk@gmail.com', 7825780817);
@@ -32,12 +45,11 @@ insert into offers(offer_description) values ('Offer Description6');
 insert into offers(offer_description) values ('Offer Description7');
 
 insert into cart(user_id) values (1);
-insert into cart values (2);
-insert into cart values (3);
-insert into cart values (4);
-insert into cart values (5);
-insert into cart values (6);
-
+insert into cart(user_id) values (2);
+insert into cart(user_id) values (3);
+insert into cart(user_id) values (4);
+insert into cart(user_id) values (5);
+insert into cart(user_id) values (6);
 
 insert into complaint(user_id, complaint_description, complaint_date) values (1, 'Complaint Description1', '2020-10-05 14:01:10-08');
 insert into complaint(user_id, complaint_description, complaint_date) values (1, 'Complaint Description2', '2020-10-05 14:01:10-08');
@@ -57,15 +69,15 @@ insert into team(total_points) values (10);
 
 insert into game values ('Valorant', 1, 'Action', '1GB', 'PC', '2020-10-05 14:01:10-08');
 insert into game values ('COD', 2, 'Romance', '2GB', 'Phone', '2020-10-05 14:01:10-08');
-insert into game values ('Counter Strike', 3, 'FPS', '1GB', 'Xbox', '2020-10-05 14:01:10-08');
+insert into game values ('CSGO', 3, 'FPS', '1GB', 'Xbox', '2020-10-05 14:01:10-08');
 
 
-insert into contest(game_name, contest_description, start_date, end_date) values('COD battleroyale','battle royale comp with 25 teams last team to survie wins','2020-10-05 14:01:10-08''2020-10-05 14:01:10-08');
-insert into contest(game_name, contest_description, start_date, end_date) values('COD multiplayer','Hardpoint,Domination,Team Death match','2020-10-05 14:01:10-08''2020-10-05 14:01:10-08');
-insert into contest(game_name, contest_description, start_date, end_date) values('Valorant 1','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
-insert into contest(game_name, contest_description, start_date, end_date) values('Valorant 2','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
-insert into contest(game_name, contest_description, start_date, end_date) values('CS GO 1','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
-insert into contest(game_name, contest_description, start_date, end_date) values('CS GO 2','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
+insert into contest(game_name, contest_description, start_date, end_date) values('COD','battle royale comp with 25 teams last team to survie wins','2020-10-05 14:01:10-08','2020-10-05 14:01:10-08');
+insert into contest(game_name, contest_description, start_date, end_date) values('COD','Hardpoint,Domination,Team Death match','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
+insert into contest(game_name, contest_description, start_date, end_date) values('Valorant','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
+insert into contest(game_name, contest_description, start_date, end_date) values('Valorant','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
+insert into contest(game_name, contest_description, start_date, end_date) values('CSGO','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
+insert into contest(game_name, contest_description, start_date, end_date) values('CSGO','Description','2020-10-05 14:01:10-08', '2020-10-05 14:01:10-08');
 
 insert into payment(cart_id, payment_mode, payment_date, amount_paid) values (1, 'COD', '2020-10-05 14:01:10-08', 200);
 insert into payment(cart_id, payment_mode, payment_date, amount_paid) values (2, 'DEBIT', '2020-10-05 14:01:10-08', 300);
@@ -87,10 +99,13 @@ insert into product_offers values (4, 1, '2020-10-05 14:01:10-08');
 
 insert into address values(1, 'Address1');
 insert into address values(1, 'Address2');
-insert into address values(1, 'Address3');
-insert into address values(1, 'Address4');
-insert into address values(1, 'Address5');
-insert into address values(1, 'Address6');
+insert into address values(2, 'Address1');
+insert into address values(4, 'Address1');
+insert into address values(2, 'Address2');
+insert into address values(3, 'Address1');
+insert into address values(3, 'Address2');
+insert into address values(3, 'Address3');
+
 
 insert into participates values (1, 1, 5, 10);
 insert into participates values (2, 2, 5, 10);

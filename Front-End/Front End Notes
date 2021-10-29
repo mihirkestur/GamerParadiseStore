@@ -1,0 +1,5 @@
+Front End Notes
+view 1 product_supplier
+view 2 users
+    insert/delete/update first_name, last_name, e_mail, phone
+view 3 team (No updations only select)
