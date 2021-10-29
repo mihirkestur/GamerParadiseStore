@@ -1,4 +1,4 @@
-insert into Product values(1,200,4.5,'lkajdflkjdlkfj','game');
+insert into Product(supplier_id,price,rating) values(1,200,4.5,'lkajdflkjdlkfj','game');
 insert into Product values(1,1000,3.5,'oweirowiur','accessory');
 insert into Product values(2,800,4,'akjdfkljsda','accessory');
 insert into Product values(4,275,4.2,'lkakjdflk','game');
@@ -24,14 +24,13 @@ insert into users values('klajdlf','oqiwpei','mohalk@gmail.com',7825780817);
 insert into users values('klajdlf','oqiwpei','mohalk@gmail.com',7825780817);
 
 
-insert into offers values('ljkadflkjdslfj');
-insert into offers values('ljkadflkjdslfj');
-insert into offers values('ljkadflkjdslfj');
-insert into offers values('ljkadflkjdslfj');
-insert into offers values('ljkadflkjdslfj');
-insert into offers values('ljkadflkjdslfj');
-insert into offers values('ljkadflkjdslfj');
-insert into offers values('ljkadflkjdslfj');
+insert into offers(offer_description) values('ljkadflkjdslfj');
+insert into offers(offer_description) values('ljkadflkjdslfj');
+insert into offers(offer_description) values('ljkadflkjdslfj');
+insert into offers(offer_description) values('ljkadflkjdslfj');
+insert into offers(offer_description) values('ljkadflkjdslfj');
+insert into offers(offer_description) values('ljkadflkjdslfj');
+insert into offers(offer_description) values('ljkadflkjdslfj');
 
 
 
