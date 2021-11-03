@@ -1,14 +1,18 @@
 /*
 TODO
-Use triggers for product id going to games and accessories
 On delete and on update
-What do you want to display on the front end?
-Aggregate, group by and order by,
-In not in exist, complex queries
-Transaction (No need concurrency)
+
 Create multiple users and show updates in one user displayed in the other user
 While creating a user, give permissions accoringly (specific attribute or the entire table)
 Create view and give permission to the user (in case we need to give a subset of attributes permissions)
+
+What do you want to display on the front end?
+Aggregate, group by and order by,
+In not in exist, complex queries
+
+Transaction (No need concurrency)
+
+Use triggers for product id going to games and accessories
 */
 
 insert into users(first_name, last_name, e_mail, phone) values ('Fame1', 'Lname1', 'mohalk@gmail.com', 7825780817);
@@ -68,8 +72,8 @@ insert into team(total_points) values (10);
 insert into team(total_points) values (10);
 
 insert into game values ('Valorant', 1, 'Action', '1GB', 'PC', '2020-10-05 14:01:10-08');
-insert into game values ('COD', 2, 'Romance', '2GB', 'Phone', '2020-10-05 14:01:10-08');
-insert into game values ('CSGO', 3, 'FPS', '1GB', 'Xbox', '2020-10-05 14:01:10-08');
+insert into game values ('COD', 4, 'Romance', '2GB', 'Phone', '2020-10-05 14:01:10-08');
+insert into game values ('CSGO', 5, 'FPS', '1GB', 'Xbox', '2020-10-05 14:01:10-08');
 
 
 insert into contest(game_name, contest_description, start_date, end_date) values('COD','battle royale comp with 25 teams last team to survie wins','2020-10-05 14:01:10-08','2020-10-05 14:01:10-08');
@@ -84,8 +88,8 @@ insert into payment(cart_id, payment_mode, payment_date, amount_paid) values (2,
 insert into payment(cart_id, payment_mode, payment_date, amount_paid) values (3, 'CREDIT', '2020-10-05 14:01:10-08', 200);
 insert into payment(cart_id, payment_mode, payment_date, amount_paid) values (4, 'DEBIT', '2020-10-05 14:01:10-08', 400);
 
-insert into accessory values ('headphones 1', 1, 30, 40, 60,2,'category 1');
-insert into accessory values ('keyboard 1', 2, 50, 70, 80, 10, 'category 1');
+insert into accessory values ('headphones 1', 2, 30, 40, 60,2,'category 1');
+insert into accessory values ('keyboard 1', 6, 50, 70, 80, 10, 'category 1');
 insert into accessory values ('shirt 1', 3, 70, 50, 10, 20, 'category 2');
 
 insert into cart_item values (1, 1, '2020-10-05 14:01:10-08', 1);
@@ -95,7 +99,7 @@ insert into cart_item values (3, 1, '2020-10-05 14:01:10-08', 1);
 insert into product_offers values (1, 1, '2020-10-05 14:01:10-08');
 insert into product_offers values (2, 2, '2020-10-05 14:01:10-08');
 insert into product_offers values (3, 1, '2020-10-05 14:01:10-08');
-insert into product_offers values (4, 1, '2020-10-05 14:01:10-08');
+insert into product_offers values (6, 1, '2020-10-05 14:01:10-08');
 
 insert into address values(1, 'Address1');
 insert into address values(1, 'Address2');
