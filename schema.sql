@@ -1,4 +1,3 @@
--- Creating database
 drop database gamer_paradise;
 create database gamer_paradise;
 \c gamer_paradise
@@ -39,7 +38,7 @@ create table cart (
 
 create table complaint (
     complaint_id int generated always as identity primary key,           --PK
-    user_id int references users(user_id),                     --FK
+    user_id int references users(user_id),                               --FK
     complaint_description varchar(50),
     complaint_date timestamp
 );
@@ -51,7 +50,7 @@ create table team (
 
 create table game (
     game_name varchar(30) primary key,                                   --PK
-    product_id int references product(product_id),            --FK
+    product_id int references product(product_id),                       --FK
     genre varchar(20),
     specifications varchar(50),
     platform varchar(10),
@@ -60,7 +59,7 @@ create table game (
 
 create table contest (
     contest_id int generated always as identity primary key,             --PK
-    game_name varchar(30) references game(game_name),         --FK
+    game_name varchar(30) references game(game_name),                    --FK
     contest_description varchar, 
     start_date timestamp,
     end_date timestamp
@@ -68,15 +67,15 @@ create table contest (
 
 create table payment (
     payment_id int generated always as identity primary key,             --PK
-    cart_id int references cart(cart_id),                     --FK
+    cart_id int references cart(cart_id),                                --FK
     payment_mode varchar(10),
     payment_date timestamp,
     amount_paid int
 );
 
 create table accessory (
-    accessory_name varchar(30) primary key,                               --PK
-    product_id int references product(product_id),            --FK
+    accessory_name varchar(30) primary key,                              --PK
+    product_id int references product(product_id),                       --FK
     length int,
     breadth int,
     width int,
@@ -85,36 +84,36 @@ create table accessory (
 );
 
 create table cart_item (
-    product_id int references product(product_id),            --FK
-    cart_id int references cart(cart_id),                     --FK
+    product_id int references product(product_id),                       --FK
+    cart_id int references cart(cart_id),                                --FK
     date_added timestamp, 
     quantity_wished int,
     primary key(product_id, cart_id)
 );
 
 create table product_offers (
-    product_id int references product(product_id),            --FK
-    offer_id int references offers(offer_id),                 --FK
+    product_id int references product(product_id),                       --FK
+    offer_id int references offers(offer_id),                            --FK
     end_time timestamp,
     primary key(product_id, offer_id)
 );
 
 create table address (
-    user_id int references users(user_id),                     --FK
+    user_id int references users(user_id),                               --FK
     address varchar(50),
     primary key(user_id, address)
 );
 
 create table participates (
-    contest_id int references contest(contest_id),            --FK
-    team_id int references team(team_id),                     --FK
+    contest_id int references contest(contest_id),                       --FK
+    team_id int references team(team_id),                                --FK
     points_gained int,
     prize_won varchar(30),
     primary key(contest_id, team_id)
 );
 
 create table belongs_to (
-    user_id int references users(user_id),                     --FK 
-    team_id int references team(team_id),                     --FK
+    user_id int references users(user_id),                               --FK 
+    team_id int references team(team_id),                                --FK
     primary key(user_id, team_id)
 );
