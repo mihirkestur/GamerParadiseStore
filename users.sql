@@ -1,3 +1,6 @@
+drop user inventory_manager;
+drop user customer;
+
 -- inventory_manager
 create user inventory_manager with encrypted password 'manager';
 -- product, product_supplier, product_offers, offers, accessory, game, contest
@@ -7,4 +10,4 @@ grant all on product, product_supplier, product_offers, offers, accessory, game,
 create user customer with encrypted password 'customer';
 
 grant insert, update, select, delete on team, belongs_to, participates, address, cart_item, payment, users, complaint to customer;
-grant select on product, game, contests, product_supplier, accessory, product_offers, offers to customer;
+grant select on product, game, contest, product_supplier, accessory, product_offers, offers to customer;

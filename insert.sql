@@ -66,14 +66,14 @@ insert into complaint(user_id, complaint_description, complaint_date) values (1,
 insert into complaint(user_id, complaint_description, complaint_date) values (1, 'Complaint Description5', '2020-10-05 14:01:10-08');
 insert into complaint(user_id, complaint_description, complaint_date) values (1, 'Complaint Description6', '2020-10-05 14:01:10-08');
 
+insert into team(total_points) values (1);
 insert into team(total_points) values (10);
+insert into team(total_points) values (15);
 insert into team(total_points) values (10);
+insert into team(total_points) values (30);
+insert into team(total_points) values (40);
 insert into team(total_points) values (10);
-insert into team(total_points) values (10);
-insert into team(total_points) values (10);
-insert into team(total_points) values (10);
-insert into team(total_points) values (10);
-insert into team(total_points) values (10);
+insert into team(total_points) values (50);
 
 insert into game values ('Valorant', 1, 'Action', '1GB', 'PC', '2020-10-05 14:01:10-08');
 insert into game values ('COD', 4, 'Romance', '2GB', 'Phone', '2020-10-05 14:01:10-08');
