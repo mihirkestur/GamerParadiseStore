@@ -1,5 +1,6 @@
 /*
 TODO
+Use triggers for product id going to games and accessories
 On delete and on update
 
 Create multiple users and show updates in one user displayed in the other user
@@ -11,6 +12,9 @@ Aggregate, group by and order by,
 In not in exist, complex queries
 
 Transaction (No need concurrency)
+Create multiple users and show updates in one user displayed in the other user
+While creating a user, give permissions accordingly (specific attribute or the entire table)
+Create view and give permission to the user (in case we need to give a subset of attributes permissions)
 
 Use triggers for product id going to games and accessories
 */
