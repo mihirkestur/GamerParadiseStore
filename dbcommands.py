@@ -12,7 +12,17 @@ def select_from_table(cursor, table_name, value = "*"):
 def insert_into_table(cursor, table_name, values):
     pass
 
+def delete_entry_from_table(cursor, table_name, id, key):
+    command = f"""delete from {table_name} where {id} = {key}"""
+    try:
+        cursor.execute(command)
+    except Exception as e:
+        return e
+    return "Deleted Successfully"
+
 def execute_any_command(cursor, command):
     command = f"""{command}"""
     cursor.execute(command)
-    return cursor.fetchall()
+    op = cursor.fetchall()
+    op = [tuple(str(item) for item in t) for t in op]
+    return pd.DataFrame(op)
