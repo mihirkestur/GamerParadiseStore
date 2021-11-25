@@ -38,6 +38,15 @@ elif(choice == "Gamer"):
             phone = st.text_input(label='Phone')
             addr = st.text_input(label='Address')
             submit_button = st.form_submit_button(label='Submit')
+        if(submit_button):
+            values = f"('{first_name}','{last_name}','{email}','{phone}')"
+            column_names = '(first_name, last_name, e_mail, phone)'
+            user_id = dbcommands.insert_into_table(cursor, "users",column_names, values,'user_id')
+            st.success(f"Your user id is : {user_id}")
+            values = f"('{user_id}','{addr}')"
+            column_names = '(user_id, address)'
+            dbcommands.insert_into_table(cursor, "address",column_names, values,'user_id')
+            
     elif(operation == "Update Gamer Info"):
         with st.form(key='Users'):
             first_name = st.text_input(label='First name')

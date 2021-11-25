@@ -9,8 +9,11 @@ def select_from_table(cursor, table_name, value = "*"):
     cursor.execute(command)
     return pd.DataFrame(cursor.fetchall(), columns=get_col_names(cursor, table_name))
 
-def insert_into_table(cursor, table_name, values):
-    pass
+def insert_into_table(cursor, table_name, column_names,  values, key_value):
+   # fname, lname, email, phone, addr = values
+    command = f"""insert into {table_name} {column_names} values {values} returning {key_value}"""
+    cursor.execute(command)
+    return cursor.fetchall()[0][0]
 
 def delete_entry_from_table(cursor, table_name, id, key):
     command = f"""delete from {table_name} where {id} = {key}"""
