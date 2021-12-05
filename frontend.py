@@ -1,3 +1,4 @@
+from numpy.core.fromnumeric import prod
 import streamlit as st
 st.set_page_config(page_title='GamerParadiseStore', layout = 'wide', initial_sidebar_state = 'auto')
 import dbcommands
@@ -24,11 +25,11 @@ if(choice == "Developer"):
 elif(choice == "Gamer"):
     operation = st.radio("Select operation", (
     "Insert Gamer Info",
-    "Update Gamer Info",
+    #"Update Gamer Info",
     "Delete Gamer Info",
     "View/Buy",
-    "Complaint",
-    "Participate in Contest"
+    #"Participate in Contest",
+    #"Complaint"
     ))
     if(operation == "Insert Gamer Info"):
         with st.form(key='Users'):
@@ -42,114 +43,115 @@ elif(choice == "Gamer"):
             values = f"('{first_name}','{last_name}','{email}','{phone}')"
             column_names = '(first_name, last_name, e_mail, phone)'
             user_id = dbcommands.insert_into_table(cursor, "users",column_names, values,'user_id')
-            st.success(f"Your user id is : {user_id}")
+            
             values = f"('{user_id}','{addr}')"
             column_names = '(user_id, address)'
             dbcommands.insert_into_table(cursor, "address",column_names, values,'user_id')
-            
-    elif(operation == "Update Gamer Info"):
-        with st.form(key='Users'):
-            first_name = st.text_input(label='First name')
-            last_name = st.text_input(label='Last name')
-            email = st.text_input(label='E-mail')
-            phone = st.text_input(label='Phone')
-            addr = st.text_input(label='Address')
-            submit_button = st.form_submit_button(label='Submit')
+            st.success(f"Your user id is : {user_id}")
+
+    # elif(operation == "Update Gamer Info"):
+    #     with st.form(key='Users'):
+    #         first_name = st.text_input(label='First name')
+    #         last_name = st.text_input(label='Last name')
+    #         email = st.text_input(label='E-mail')
+    #         phone = st.text_input(label='Phone')
+    #         addr = st.text_input(label='Address')
+    #         submit_button = st.form_submit_button(label='Submit')
+
     elif(operation == "Delete Gamer Info"):
         with st.form(key='delete user'):
             user_id = st.text_input(label='Enter user id')
             submit_button = st.form_submit_button(label='Delete user')
         if(submit_button):
             st.info(dbcommands.delete_entry_from_table(cursor, "users", "user_id", user_id))
-    elif(operation == "Complaint"):
-        # complaint_id and user_id ?
-        with st.form(key='complaint'):
-            comp_desc = st.text_input(label='Complaint Description')
-            comp_date = st.text_input(label='Complaint Date')
-            submit_button = st.form_submit_button(label='Submit')
+    
+    # elif(operation == "Complaint"):
+    #     # complaint_id and user_id ?
+    #     with st.form(key='complaint'):
+    #         comp_desc = st.text_input(label='Complaint Description')
+    #         comp_date = st.text_input(label='Complaint Date')
+    #         submit_button = st.form_submit_button(label='Submit')
+    
     elif(operation == "View/Buy"):
-        # complaint_id and user_id ?
+
+        # user_id?
         with st.form(key='Cart item/Cart/Payment'):
             # product_id
+            user_id = st.text_input(label='User id')
+            product_id = st.text_input(label='Product id')
             pay_mode = st.text_input(label='Payment Mode')
             pay_date = st.text_input(label='Payment Date')
             amnt_paid = st.text_input(label='Amount Paid')
             date_add = st.text_input(label='Date Added')
             quant_wish = st.text_input(label='Quantity wished')
             submit_button = st.form_submit_button(label='Submit')
-    elif(operation == "Participate in Contest"):
-        # complaint_id and user_id ?
-        with st.form(key='Participates/Team/Belongs_to'):
-            # points gained, prize won, total points
-            contest_id = st.text_input(label='Contest name/Id')
-            team_id = st.text_input(label='Team Id')
-            submit_button = st.form_submit_button(label='Submit')
+    
+    # elif(operation == "Participate in Contest"):
+    #     # complaint_id and user_id ?
+    #     with st.form(key='Participates/Team/Belongs_to'):
+    #         # points gained, prize won, total points
+    #         contest_id = st.text_input(label='Contest name/Id')
+    #         team_id = st.text_input(label='Team Id')
+    #         submit_button = st.form_submit_button(label='Submit')
 
 elif(choice == "Manager"):
 
     operation = st.radio("Select operation", (
+    "Insert Product Supplier Details",
+    #"Update Product Supplier Details",
     "Insert Product Details",
-    "Update Product Details",
-    "Delete a product",
+    #"Update Product Details",
+    #"Insert Offer",
+    #"Update Offer",
+    "Contest details",
+    "Delete a product"
     ))
 
     if(operation == "Insert Product Details"):
-        sup_name = st.text_input(label='Supplier Name')
-        sup_phone = st.text_input(label='Supplier Phone')
-        coo = st.text_input(label='Country of origin')
-        price = st.text_input(label='Price')
-        rating = st.text_input(label='Rating')
-        desc = st.text_input(label='Description')
-        off_desc = st.text_input(label='Offer description')
-        off_et = st.text_input(label='Offer end-time')
-        product_type = st.selectbox("Product type", (
-        "None",
-        "Game",
-        "Accessory",
-        "Contest details"
-        ))
-        if(product_type == "Game"):
-            with st.form(key='Game'):
-                game_name = st.text_input(label='Game name')
-                genre = st.text_input(label='Genre')
-                specs = st.text_input(label='Specifications')
-                platform = st.text_input(label='Platform')
-                rel_date = st.text_input(label='Release Date')
-                submit_button = st.form_submit_button(label='Submit')
-        elif(product_type == "Accessory"):
-            with st.form(key='Accessory'):
-                accessory_name = st.text_input(label='Accessory name')
-                length = st.text_input(label='Length')
-                breadth = st.text_input(label='Breadth')
-                width = st.text_input(label='Width')
-                quant = st.text_input(label='Quantity')
-                sub_cat = st.text_input(label='Sub-Category')
-                submit_button = st.form_submit_button(label='Submit')
-        elif(product_type == "Contest details"):
-            with st.form(key='Contest'):
-                game_name = st.text_input(label='Game name')
-                contest_desc = st.text_input(label='Contest Description')
-                start_date = st.text_input(label='Start Date')
-                end_date = st.text_input(label='End Date')
-                quant = st.text_input(label='Quantity')
-                sub_cat = st.text_input(label='Sub-Category')
-                submit_button = st.form_submit_button(label='Submit')
+        # product_supplier
+        with st.form(key="supplier"):
+            sup_name = st.text_input(label='Supplier Name')
+            sup_phone = st.text_input(label='Supplier Phone')
+            coo = st.text_input(label='Country of origin')
+            submit_button = st.form_submit_button(label='Submit')
 
-    elif(operation == "Update Product Details"):
-        sup_name = st.text_input(label='Supplier Name')
-        sup_phone = st.text_input(label='Supplier Phone')
-        coo = st.text_input(label='Country of origin')
+        if(submit_button):
+            values = f"('{sup_phone}','{sup_name}','{coo}')"
+            column_names = '(supplier_phone, supplier_name, country_of_origin)'
+            supplier_id = dbcommands.insert_into_table(cursor, "product_supplier", column_names, values, 'supplier_id')
+            st.success(f"Your supplier id is : {supplier_id}")
+
+    
+    # elif(operation == "Update Product Supplier Details"):
+    #     # product_supplier
+    #     with st.form(key="supplier"):
+    #         sup_name = st.text_input(label='Supplier Name')
+    #         sup_phone = st.text_input(label='Supplier Phone')
+    #         coo = st.text_input(label='Country of origin')
+    #         submit_button = st.form_submit_button(label='Submit')
+
+    #     if(submit_button):
+    #         values = f"('{sup_phone}','{sup_name}','{coo}')"
+    #         column_names = '(supplier_phone, supplier_name, country_of_origin)'
+    #         supplier_id = dbcommands.insert_into_table(cursor, "product_supplier", column_names, values, 'supplier_id')
+    #         st.success(f"Your supplier id is : {supplier_id}")
+
+    elif(operation == "Insert Product Details"):
+        # product
+        supplier_id = st.text_input(label='Supplier_id')
         price = st.text_input(label='Price')
         rating = st.text_input(label='Rating')
         desc = st.text_input(label='Description')
-        off_desc = st.text_input(label='Offer description')
+
+        off_id = st.text_input(label='Offer ID')
         off_et = st.text_input(label='Offer end-time')
+
         product_type = st.selectbox("Product type", (
         "None",
         "Game",
-        "Accessory",
-        "Contest details"
+        "Accessory"
         ))
+
         if(product_type == "Game"):
             with st.form(key='Game'):
                 game_name = st.text_input(label='Game name')
@@ -167,15 +169,90 @@ elif(choice == "Manager"):
                 quant = st.text_input(label='Quantity')
                 sub_cat = st.text_input(label='Sub-Category')
                 submit_button = st.form_submit_button(label='Submit')
-        elif(product_type == "Contest details"):
-            with st.form(key='Contest'):
-                game_name = st.text_input(label='Game name')
-                contest_desc = st.text_input(label='Contest Description')
-                start_date = st.text_input(label='Start Date')
-                end_date = st.text_input(label='End Date')
-                quant = st.text_input(label='Quantity')
-                sub_cat = st.text_input(label='Sub-Category')
-                submit_button = st.form_submit_button(label='Submit')
+        
+        # elif(product_type == "Contest details"):
+        #     with st.form(key='Contest'):
+        #         game_name = st.text_input(label='Game name')
+        #         contest_desc = st.text_input(label='Contest Description')
+        #         start_date = st.text_input(label='Start Date')
+        #         end_date = st.text_input(label='End Date')
+        #         quant = st.text_input(label='Quantity')
+        #         sub_cat = st.text_input(label='Sub-Category')
+        #         submit_button = st.form_submit_button(label='Submit')
+
+        if(submit_button):
+            # product
+            values = f"('{supplier_id}','{price}','{rating}','{desc}','{product_type}')"
+            column_names = '(supplier_id, price, rating, description, type)'
+            product_id = dbcommands.insert_into_table(cursor, "product", column_names, values, 'product_id')
+            
+            # product and accessory
+            values = f"('{accessory_name}','{product_id}','{length}','{breadth}','{width}','{quant}','{sub_cat}')"
+            column_names = ''
+            dbcommands.insert_into_table(cursor, "address", column_names, values, 'accessory_name')
+            
+            # product and game
+            values = f"('{game_name}','{product_id}','{genre}','{specs}','{platform}','{rel_date}')"
+            column_names = ''
+            dbcommands.insert_into_table(cursor, "address", column_names, values, 'accessory_name')
+            
+            
+            st.success(f"Your product_id is : {product_id}")
+
+    
+    
+    elif(operation == "Insert Offer"):
+        with st.form(key="offer"):
+            off_desc = st.text_input(label='Offer description')
+            submit_button = st.form_submit_button(label='Submit')
+
+        if(submit_button):
+            values = f"('{off_desc}')"
+            column_names = '(offer_description)'
+            user_id = dbcommands.insert_into_table(cursor, "offers", column_names, values, 'offer_id')
+            st.success(f"The offer_id is : {user_id}")
+
+    # elif(operation == "Update Product Details"):
+    #     sup_name = st.text_input(label='Supplier Name')
+    #     sup_phone = st.text_input(label='Supplier Phone')
+    #     coo = st.text_input(label='Country of origin')
+    #     price = st.text_input(label='Price')
+    #     rating = st.text_input(label='Rating')
+    #     desc = st.text_input(label='Description')
+    #     off_desc = st.text_input(label='Offer description')
+    #     off_et = st.text_input(label='Offer end-time')
+    #     product_type = st.selectbox("Product type", (
+    #     "None",
+    #     "Game",
+    #     "Accessory",
+    #     "Contest details"
+    #     ))
+    #     if(product_type == "Game"):
+    #         with st.form(key='Game'):
+    #             game_name = st.text_input(label='Game name')
+    #             genre = st.text_input(label='Genre')
+    #             specs = st.text_input(label='Specifications')
+    #             platform = st.text_input(label='Platform')
+    #             rel_date = st.text_input(label='Release Date')
+    #             submit_button = st.form_submit_button(label='Submit')
+    #     elif(product_type == "Accessory"):
+    #         with st.form(key='Accessory'):
+    #             accessory_name = st.text_input(label='Accessory name')
+    #             length = st.text_input(label='Length')
+    #             breadth = st.text_input(label='Breadth')
+    #             width = st.text_input(label='Width')
+    #             quant = st.text_input(label='Quantity')
+    #             sub_cat = st.text_input(label='Sub-Category')
+    #             submit_button = st.form_submit_button(label='Submit')
+    #     elif(product_type == "Contest details"):
+    #         with st.form(key='Contest'):
+    #             game_name = st.text_input(label='Game name')
+    #             contest_desc = st.text_input(label='Contest Description')
+    #             start_date = st.text_input(label='Start Date')
+    #             end_date = st.text_input(label='End Date')
+    #             quant = st.text_input(label='Quantity')
+    #             sub_cat = st.text_input(label='Sub-Category')
+    #             submit_button = st.form_submit_button(label='Submit')
     
     elif(operation == "Delete a product"):
         with st.form(key='delete product'):
