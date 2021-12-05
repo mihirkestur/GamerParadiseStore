@@ -1,4 +1,5 @@
 from numpy.core.fromnumeric import prod
+from numpy.lib.function_base import select
 import streamlit as st
 st.set_page_config(page_title='GamerParadiseStore', layout = 'wide', initial_sidebar_state = 'auto')
 import dbcommands
@@ -23,13 +24,13 @@ if(choice == "Developer"):
             st.error(f"{e}")
 
 elif(choice == "Gamer"):
-    operation = st.radio("Select operation", (
+    operation = st.radio("What do you want to do?", (
     "Insert Gamer Info",
     #"Update Gamer Info",
     "Delete Gamer Info",
-    "View/Buy",
-    #"Participate in Contest",
-    #"Complaint"
+    "Purchase",
+    "Participate in Contest",
+    "Register Complaint"
     ))
     if(operation == "Insert Gamer Info"):
         with st.form(key='Users'):
@@ -65,34 +66,57 @@ elif(choice == "Gamer"):
         if(submit_button):
             st.info(dbcommands.delete_entry_from_table(cursor, "users", "user_id", user_id))
     
-    # elif(operation == "Complaint"):
-    #     # complaint_id and user_id ?
-    #     with st.form(key='complaint'):
-    #         comp_desc = st.text_input(label='Complaint Description')
-    #         comp_date = st.text_input(label='Complaint Date')
-    #         submit_button = st.form_submit_button(label='Submit')
+    elif(operation == "Register Complaint"):
+        with st.form(key='complaint'):
+            user_id = st.text_input(label='User id')
+            comp_desc = st.text_input(label='Complaint Description')
+            comp_date = st.text_input(label='Complaint Date')
+            submit_button = st.form_submit_button(label='Submit')
     
-    elif(operation == "View/Buy"):
+    elif(operation == "Purchase"):
 
-        # user_id?
-        with st.form(key='Cart item/Cart/Payment'):
-            # product_id
+        with st.form(key='Cart item'):
             user_id = st.text_input(label='User id')
             product_id = st.text_input(label='Product id')
+            date_add = st.text_input(label='Date Added')
+            quant_wish = st.text_input(label='Quantity wished')
+            add_to_cart = st.form_submit_button(label='Add to cart')
+
+        if(st.button(label="View my cart")):
+            # NOTE: user_id should be cart_id. Needs to be obtained
+            st.dataframe(dbcommands.select_from_table(cursor, "cart_item", "*", f"where cart_id = {user_id}"))
+
+        if(st.button(label="View Details")):
+            st.dataframe(dbcommands.select_from_table(cursor, "product"))
+            st.dataframe(dbcommands.select_from_table(cursor, "game"))
+            st.dataframe(dbcommands.select_from_table(cursor, "accessory"))
+            st.dataframe(dbcommands.select_from_table(cursor, "product_offers"))
+            st.dataframe(dbcommands.select_from_table(cursor, "offers"))
+
+        if(add_to_cart):
+            # insert to cart_item
+            pass
+            
+        with st.form(key='Cart/Payment'):
+            user_id = st.text_input(label='Confirm User id')
             pay_mode = st.text_input(label='Payment Mode')
             pay_date = st.text_input(label='Payment Date')
             amnt_paid = st.text_input(label='Amount Paid')
-            date_add = st.text_input(label='Date Added')
-            quant_wish = st.text_input(label='Quantity wished')
+            buy = st.form_submit_button(label='Make payment on cart')
+        if(buy):
+            # insert to transaction
+            pass
+
+    elif(operation == "Participate in Contest"):
+        with st.form(key='Participates/Team/Belongs_to'):
+            # points gained, prize won, total points
+            user_id = st.text_input(label='User id')
+            contest_id = st.text_input(label='Contest Id')
+            team_id = st.text_input(label='Team Id')
             submit_button = st.form_submit_button(label='Submit')
-    
-    # elif(operation == "Participate in Contest"):
-    #     # complaint_id and user_id ?
-    #     with st.form(key='Participates/Team/Belongs_to'):
-    #         # points gained, prize won, total points
-    #         contest_id = st.text_input(label='Contest name/Id')
-    #         team_id = st.text_input(label='Team Id')
-    #         submit_button = st.form_submit_button(label='Submit')
+        if(st.button(label="Browse Contests and Teams")):
+            st.dataframe(dbcommands.select_from_table(cursor, "contest"))
+            st.dataframe(dbcommands.select_from_table(cursor, "team"))
 
 elif(choice == "Manager"):
 

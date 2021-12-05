@@ -4,7 +4,7 @@ def get_col_names(cursor, table_name):
     cursor.execute(command)
     return cursor.fetchall()
 
-def select_from_table(cursor, table_name, value = "*"):
+def select_from_table(cursor, table_name, value = "*", where=""):
     command = f"""select {value} from {table_name}"""
     cursor.execute(command)
     return pd.DataFrame(cursor.fetchall(), columns=get_col_names(cursor, table_name))
