@@ -73,6 +73,11 @@ elif(choice == "Gamer"):
             comp_desc = st.text_input(label='Complaint Description')
             comp_date = st.text_input(label='Complaint Date')
             submit_button = st.form_submit_button(label='Submit')
+        if (submit_button):
+            values = f"('{user_id}','{comp_desc}','{comp_date}')"
+            column_names = '(user_id, complaint_description, complaint_date)'
+            comp_id = dbcommands.insert_into_table(cursor,'complaint',column_names,values,'complaint_id')
+            st.success(f"Complaint registered, your complaint ID is {comp_id}")
     
     elif(operation == "Purchase"):
 
@@ -131,10 +136,17 @@ elif(choice == "Gamer"):
     elif(operation == "Participate in Contest"):
         with st.form(key='Participates/Team/Belongs_to'):
             # points gained, prize won, total points
-            user_id = st.text_input(label='User id')
+            #user_id = st.text_input(label='User id')
             contest_id = st.text_input(label='Contest Id')
             team_id = st.text_input(label='Team Id')
             submit_button = st.form_submit_button(label='Submit')
+        
+        if(submit_button):
+            values = f"('{contest_id}','{team_id}',0,0)"
+            column_names = '(contest_id, team_id, points_gained, prize_won)'
+            c_id = dbcommands.insert_into_table(cursor,'participates',column_names,values, 'contest_id')
+            st.success(f"team {team_id} added to contest {c_id}")
+
         if(st.button(label="Browse Contests and Teams")):
             st.dataframe(dbcommands.select_from_table(cursor, "contest"))
             st.dataframe(dbcommands.select_from_table(cursor, "team"))
