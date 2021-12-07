@@ -125,13 +125,13 @@ elif(choice == "Manager"):
     #"Update Product Supplier Details",
     "Insert Product Details",
     #"Update Product Details",
-    #"Insert Offer",
+    "Insert Offer",
     #"Update Offer",
     "Contest details",
     "Delete a product"
     ))
 
-    if(operation == "Insert Product Details"):
+    if(operation == "Insert Product Supplier Details"):
         # product_supplier
         with st.form(key="supplier"):
             sup_name = st.text_input(label='Supplier Name')
@@ -193,16 +193,6 @@ elif(choice == "Manager"):
                 quant = st.text_input(label='Quantity')
                 sub_cat = st.text_input(label='Sub-Category')
                 submit_button = st.form_submit_button(label='Submit')
-        
-        # elif(product_type == "Contest details"):
-        #     with st.form(key='Contest'):
-        #         game_name = st.text_input(label='Game name')
-        #         contest_desc = st.text_input(label='Contest Description')
-        #         start_date = st.text_input(label='Start Date')
-        #         end_date = st.text_input(label='End Date')
-        #         quant = st.text_input(label='Quantity')
-        #         sub_cat = st.text_input(label='Sub-Category')
-        #         submit_button = st.form_submit_button(label='Submit')
 
         if(submit_button):
             # product
@@ -224,7 +214,17 @@ elif(choice == "Manager"):
             st.success(f"Your product_id is : {product_id}")
 
     
-    
+    elif(operation == "Contest details"):
+            with st.form(key='Contest'):
+                game_name = st.text_input(label='Game name')
+                contest_desc = st.text_input(label='Contest Description')
+                start_date = st.text_input(label='Start Date')
+                end_date = st.text_input(label='End Date')
+                quant = st.text_input(label='Quantity')
+                sub_cat = st.text_input(label='Sub-Category')
+                submit_button = st.form_submit_button(label='Submit')
+
+
     elif(operation == "Insert Offer"):
         with st.form(key="offer"):
             off_desc = st.text_input(label='Offer description')
@@ -281,13 +281,13 @@ elif(choice == "Manager"):
     elif(operation == "Delete a product"):
         with st.form(key='delete product'):
             product_id = st.text_input(label='product id')
-            product_type = st.selectbox("Product type", (
-            "None",
-            "Game",
-            "Accessory",
-            "Contest details"
-            ))
-            submit_button = st.form_submit_button(label='Submit')
+            st.dataframe(dbcommands.select_from_table(cursor, "product"))
+            # delete_what = st.selectbox("Delete what?", (
+            # "None",
+            # "Product",
+            # "Contest"
+            # ))
+            submit_button = st.form_submit_button(label='Delete product')
         if(submit_button):
             st.info(dbcommands.delete_entry_from_table(cursor, "product", "product_id", product_id))
 conn.commit()
