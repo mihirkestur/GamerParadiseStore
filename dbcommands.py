@@ -23,6 +23,11 @@ def delete_entry_from_table(cursor, table_name, id, key):
         return e
     return "Deleted Successfully"
 
+
+def update_table(cursor, table_name, col_name_value, key_value):
+    command = f"""update {table_name} set {col_name_value} where {key_value}"""
+    cursor.execute(command)
+
 def execute_any_command(cursor, command):
     command = f"""{command}"""
     cursor.execute(command)

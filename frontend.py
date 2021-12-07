@@ -27,7 +27,7 @@ if(choice == "Developer"):
 elif(choice == "Gamer"):
     operation = st.radio("What do you want to do?", (
     "Insert Gamer Info",
-    #"Update Gamer Info",
+    "Update Gamer Info",
     "Delete Gamer Info",
     "Purchase",
     "Participate in Contest",
@@ -51,14 +51,28 @@ elif(choice == "Gamer"):
             dbcommands.insert_into_table(cursor, "address",column_names, values,'user_id')
             st.success(f"Your user id is : {user_id}")
 
-    # elif(operation == "Update Gamer Info"):
-    #     with st.form(key='Users'):
-    #         first_name = st.text_input(label='First name')
-    #         last_name = st.text_input(label='Last name')
-    #         email = st.text_input(label='E-mail')
-    #         phone = st.text_input(label='Phone')
-    #         addr = st.text_input(label='Address')
-    #         submit_button = st.form_submit_button(label='Submit')
+    elif(operation == "Update Gamer Info"):
+        col_name_dict = {'First name':"first_name", 'Last name':"last_name", 'E-mail':"e_mail", 'Phone':"phone", 'Address':'address'}
+        with st.form(key='Update users'):
+            user_id = st.text_input(label='User id whose details are to be updated')
+            option = st.selectbox(
+            'What do you want to update?',
+            ('None','First name', 'Last name', 'E-mail','Phone','Address'))
+            if(option != None):
+                updated_val = st.text_input(label='Enter new value')
+                if(option == 'Address'):
+                    address_num = st.text_input(label='Enter address which is to be updated')
+            update_button = st.form_submit_button(label='Submit')
+        if(update_button):
+            if(option == "Address"):
+
+                dbcommands.update_table(cursor, "address", f"{col_name_dict[option]} = '{updated_val}'", f"user_id = {user_id} and address = '{address_num}'")
+                st.success("Updated successfully!")
+            else:
+                print(col_name_dict[option])
+                dbcommands.update_table(cursor, "users", f"{col_name_dict[option]} = '{updated_val}'", f"user_id = {user_id}")
+                st.success("Updated successfully!")
+
 
     elif(operation == "Delete Gamer Info"):
         with st.form(key='delete user'):
@@ -80,23 +94,31 @@ elif(choice == "Gamer"):
             st.success(f"Complaint registered, your complaint ID is {comp_id}")
     
     elif(operation == "Purchase"):
-
+        user_id = st.text_input(label='User id')
         with st.form(key='Cart item'):
-            user_id = st.text_input(label='User id')
             product_id = st.text_input(label='Product id')
             date_add = st.text_input(label='Date Added')
             quant_wish = st.text_input(label='Quantity wished')
             add_to_cart = st.form_submit_button(label='Add to cart')
-        
+
         if(add_to_cart):
             command = f"""select cart_id from cart where user_id = {user_id}"""
             cursor.execute(command)
             cart_id = cursor.fetchall()[0][0]
-            values = f"('{product_id}','{cart_id}','{date_add}','{quant_wish}')"
+            values = f"({product_id},{cart_id},'{date_add}','{quant_wish}')"
             column_names = '(Product_ID, Cart_ID, Date_Added, Quantity_Wished)'
             dbcommands.insert_into_table(cursor,"cart_item",column_names,values,'cart_id')
             command2 = f"""select * from cart_item where cart_id = {cart_id}"""
+            st.success(f"Successfully added to cart!")
             #st.dataframe(dbcommands.execute_any_command(cursor,command2))
+        
+        with st.form(key='remove from cart'):
+            product_id = st.text_input(label='Product id')
+            remove_from_cart = st.form_submit_button(label='Remove from cart')
+        
+        if(remove_from_cart):
+            dbcommands.delete_entry_from_table(cursor, "cart_item", "product_id", product_id)
+            st.success(f"Successfully removed from cart!")
 
         if(st.button(label="View my cart")):
             # NOTE: user_id should be cart_id. Needs to be obtained
@@ -117,7 +139,6 @@ elif(choice == "Gamer"):
             user_id = st.text_input(label='Confirm User id')
             pay_mode = st.text_input(label='Payment Mode')
             pay_date = st.text_input(label='Payment Date')
-            #amnt_paid = st.text_input(label='Amount Paid')
             buy = st.form_submit_button(label='Make payment on cart')
         if(buy):
             # insert to transaction
@@ -132,6 +153,7 @@ elif(choice == "Gamer"):
             column_names = '(cart_id, payment_mode, payment_date, amount_paid)'
             payment_id = dbcommands.insert_into_table(cursor,'payment',column_names,values,'payment_id')
             st.success(f"your payment id is {payment_id}")
+            st.dataframe(dbcommands.select_from_table(cursor, "payment", "*", f"where payment_id = {payment_id}"))
 
     elif(operation == "Participate in Contest"):
         with st.form(key='Participates/Team/Belongs_to'):
@@ -160,7 +182,7 @@ elif(choice == "Manager"):
     #"Update Product Details",
     "Insert Offer",
     #"Update Offer",
-    "Contest details",
+    "Insert contest details",
     "Delete a product"
     ))
 
@@ -180,6 +202,27 @@ elif(choice == "Manager"):
 
     
     # elif(operation == "Update Product Supplier Details"):
+    #     col_name_dict = {'First name':"first_name", 'Last name':"last_name", 'E-mail':"e_mail", 'Phone':"phone", 'Address':'address'}
+    #     with st.form(key='Update supplier details'):
+    #         supplier_id = st.text_input(label='supplier id whose details are to be updated')
+    #         option = st.selectbox(
+    #         'What do you want to update?',
+    #         ('None','Supplier Name', 'Supplier Phone', 'Country of origin'))
+    #         if(option != None):
+    #             updated_val = st.text_input(label='Enter new value')
+    #             if(option == 'Address'):
+    #                 address_num = st.text_input(label='Enter address which is to be updated')
+    #         update_button = st.form_submit_button(label='Submit')
+    #     if(update_button):
+    #         if(option == "Address"):
+
+    #             dbcommands.update_table(cursor, "address", f"{col_name_dict[option]} = '{updated_val}'", f"user_id = {user_id} and address = '{address_num}'")
+    #             st.success("Updated successfully!")
+    #         else:
+    #             print(col_name_dict[option])
+    #             dbcommands.update_table(cursor, "users", f"{col_name_dict[option]} = '{updated_val}'", f"user_id = {user_id}")
+    #             st.success("Updated successfully!")
+
     #     # product_supplier
     #     with st.form(key="supplier"):
     #         sup_name = st.text_input(label='Supplier Name')
@@ -217,6 +260,19 @@ elif(choice == "Manager"):
                 platform = st.text_input(label='Platform')
                 rel_date = st.text_input(label='Release Date')
                 submit_button = st.form_submit_button(label='Submit')
+
+                if(submit_button):
+                    # product
+                    values = f"('{supplier_id}','{price}','{rating}','{desc}','{product_type}')"
+                    column_names = '(supplier_id, price, rating, description, type)'
+                    product_id = dbcommands.insert_into_table(cursor, "product", column_names, values, 'product_id')
+                    # product and game
+                    values = f"('{game_name}','{product_id}','{genre}','{specs}','{platform}','{rel_date}')"
+                    column_names = ''
+                    dbcommands.insert_into_table(cursor, "game", column_names, values, 'game_name')
+                    
+                    
+                    st.success(f"Your product_id is : {product_id}")
         elif(product_type == "Accessory"):
             with st.form(key='Accessory'):
                 accessory_name = st.text_input(label='Accessory name')
@@ -227,25 +283,20 @@ elif(choice == "Manager"):
                 sub_cat = st.text_input(label='Sub-Category')
                 submit_button = st.form_submit_button(label='Submit')
 
-        if(submit_button):
-            # product
-            values = f"('{supplier_id}','{price}','{rating}','{desc}','{product_type}')"
-            column_names = '(supplier_id, price, rating, description, type)'
-            product_id = dbcommands.insert_into_table(cursor, "product", column_names, values, 'product_id')
-            
-            # product and accessory
-            values = f"('{accessory_name}','{product_id}','{length}','{breadth}','{width}','{quant}','{sub_cat}')"
-            column_names = ''
-            dbcommands.insert_into_table(cursor, "address", column_names, values, 'accessory_name')
-            
-            # product and game
-            values = f"('{game_name}','{product_id}','{genre}','{specs}','{platform}','{rel_date}')"
-            column_names = ''
-            dbcommands.insert_into_table(cursor, "address", column_names, values, 'accessory_name')
-            
-            
-            st.success(f"Your product_id is : {product_id}")
-
+            if(submit_button):
+                # product
+                values = f"('{supplier_id}','{price}','{rating}','{desc}','{product_type}')"
+                column_names = '(supplier_id, price, rating, description, type)'
+                product_id = dbcommands.insert_into_table(cursor, "product", column_names, values, 'product_id')
+                
+                # product and accessory
+                values = f"('{accessory_name}','{product_id}','{length}','{breadth}','{width}','{quant}','{sub_cat}')"
+                column_names = ''
+                dbcommands.insert_into_table(cursor, "accessory", column_names, values, 'accessory_name')
+                
+                
+                st.success(f"Your product_id is : {product_id}")
+        st.dataframe(dbcommands.select_from_table(cursor, "product_supplier"))
     
     elif(operation == "Contest details"):
             with st.form(key='Contest'):
@@ -253,9 +304,14 @@ elif(choice == "Manager"):
                 contest_desc = st.text_input(label='Contest Description')
                 start_date = st.text_input(label='Start Date')
                 end_date = st.text_input(label='End Date')
-                quant = st.text_input(label='Quantity')
-                sub_cat = st.text_input(label='Sub-Category')
                 submit_button = st.form_submit_button(label='Submit')
+            if(submit_button):
+                values = f"('{game_name}','{contest_desc}','{start_date}','{end_date}')"
+                column_names = '(game_name, contest_description, start_date, end_date)'
+                contest_id = dbcommands.insert_into_table(cursor, "contest", column_names, values, 'contest_id')
+                
+                st.success(f"Your contest_id is : {contest_id}")
+
 
 
     elif(operation == "Insert Offer"):
