@@ -1,6 +1,7 @@
 from numpy.core.fromnumeric import prod
 from numpy.lib.function_base import select
 import streamlit as st
+from streamlit.type_util import pyarrow_table_to_bytes
 st.set_page_config(page_title='GamerParadiseStore', layout = 'wide', initial_sidebar_state = 'auto')
 import dbcommands
 import psycopg2
@@ -72,6 +73,11 @@ elif(choice == "Gamer"):
             comp_desc = st.text_input(label='Complaint Description')
             comp_date = st.text_input(label='Complaint Date')
             submit_button = st.form_submit_button(label='Submit')
+        if (submit_button):
+            values = f"('{user_id}','{comp_desc}','{comp_date}')"
+            column_names = '(user_id, complaint_description, complaint_date)'
+            comp_id = dbcommands.insert_into_table(cursor,'complaint',column_names,values,'complaint_id')
+            st.success(f"Complaint registered, your complaint ID is {comp_id}")
     
     elif(operation == "Purchase"):
 
@@ -81,10 +87,23 @@ elif(choice == "Gamer"):
             date_add = st.text_input(label='Date Added')
             quant_wish = st.text_input(label='Quantity wished')
             add_to_cart = st.form_submit_button(label='Add to cart')
+        
+        if(add_to_cart):
+            command = f"""select cart_id from cart where user_id = {user_id}"""
+            cursor.execute(command)
+            cart_id = cursor.fetchall()[0][0]
+            values = f"('{product_id}','{cart_id}','{date_add}','{quant_wish}')"
+            column_names = '(Product_ID, Cart_ID, Date_Added, Quantity_Wished)'
+            dbcommands.insert_into_table(cursor,"cart_item",column_names,values,'cart_id')
+            command2 = f"""select * from cart_item where cart_id = {cart_id}"""
+            #st.dataframe(dbcommands.execute_any_command(cursor,command2))
 
         if(st.button(label="View my cart")):
             # NOTE: user_id should be cart_id. Needs to be obtained
-            st.dataframe(dbcommands.select_from_table(cursor, "cart_item", "*", f"where cart_id = {user_id}"))
+            command = f"""select cart_id from cart where user_id = {user_id}"""
+            cursor.execute(command)
+            cart_id = cursor.fetchall()[0][0]
+            st.dataframe(dbcommands.select_from_table(cursor, "cart_item", "*", f"where cart_id = {cart_id}"))
 
         if(st.button(label="View Details")):
             st.dataframe(dbcommands.select_from_table(cursor, "product"))
@@ -93,27 +112,41 @@ elif(choice == "Gamer"):
             st.dataframe(dbcommands.select_from_table(cursor, "product_offers"))
             st.dataframe(dbcommands.select_from_table(cursor, "offers"))
 
-        if(add_to_cart):
-            # insert to cart_item
-            pass
             
         with st.form(key='Cart/Payment'):
             user_id = st.text_input(label='Confirm User id')
             pay_mode = st.text_input(label='Payment Mode')
             pay_date = st.text_input(label='Payment Date')
-            amnt_paid = st.text_input(label='Amount Paid')
+            #amnt_paid = st.text_input(label='Amount Paid')
             buy = st.form_submit_button(label='Make payment on cart')
         if(buy):
             # insert to transaction
-            pass
+            command = f"""select cart_id from cart where user_id = {user_id}"""
+            cursor.execute(command)
+            cart_id = cursor.fetchall()[0][0]
+
+            command3 = f"""select sum(p.price*c.quantity_wished) from product as p,cart_item as c where p.product_id = c.product_id and c.cart_id = {cart_id}"""
+            amt = dbcommands.execute_any_command(cursor,command3)
+            amnt_paid = amt[0][0]
+            values = f"('{cart_id}','{pay_mode}','{pay_date}',{amnt_paid})"
+            column_names = '(cart_id, payment_mode, payment_date, amount_paid)'
+            payment_id = dbcommands.insert_into_table(cursor,'payment',column_names,values,'payment_id')
+            st.success(f"your payment id is {payment_id}")
 
     elif(operation == "Participate in Contest"):
         with st.form(key='Participates/Team/Belongs_to'):
             # points gained, prize won, total points
-            user_id = st.text_input(label='User id')
+            #user_id = st.text_input(label='User id')
             contest_id = st.text_input(label='Contest Id')
             team_id = st.text_input(label='Team Id')
             submit_button = st.form_submit_button(label='Submit')
+        
+        if(submit_button):
+            values = f"('{contest_id}','{team_id}',0,0)"
+            column_names = '(contest_id, team_id, points_gained, prize_won)'
+            c_id = dbcommands.insert_into_table(cursor,'participates',column_names,values, 'contest_id')
+            st.success(f"team {team_id} added to contest {c_id}")
+
         if(st.button(label="Browse Contests and Teams")):
             st.dataframe(dbcommands.select_from_table(cursor, "contest"))
             st.dataframe(dbcommands.select_from_table(cursor, "team"))

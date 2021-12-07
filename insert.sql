@@ -52,12 +52,12 @@ insert into offers(offer_description) values ('Offer Description5');
 insert into offers(offer_description) values ('Offer Description6');
 insert into offers(offer_description) values ('Offer Description7');
 
-insert into cart(user_id) values (1);
-insert into cart(user_id) values (2);
-insert into cart(user_id) values (3);
-insert into cart(user_id) values (4);
-insert into cart(user_id) values (5);
-insert into cart(user_id) values (6);
+-- insert into cart(user_id) values (1);
+-- insert into cart(user_id) values (2);
+-- insert into cart(user_id) values (3);
+-- insert into cart(user_id) values (4);
+-- insert into cart(user_id) values (5);
+-- insert into cart(user_id) values (6);
 
 insert into complaint(user_id, complaint_description, complaint_date) values (1, 'Complaint Description1', '2020-10-05 14:01:10-08');
 insert into complaint(user_id, complaint_description, complaint_date) values (1, 'Complaint Description2', '2020-10-05 14:01:10-08');
