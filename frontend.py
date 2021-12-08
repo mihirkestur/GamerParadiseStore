@@ -18,7 +18,7 @@ if(choice == "Developer"):
         try:
             st.dataframe(dbcommands.execute_any_command(cursor, command))
         except Exception as e:
-            st.write("Not a valid command\n{e}")
+            st.write(f"Not a valid command: {e}")
 
 elif(choice == "Gamer"):
     operation = st.radio("Select operation", (
@@ -91,5 +91,5 @@ elif(choice == "Manager"):
                 sub_cat = st.text_input(label='Sub-Category')
                 submit_button = st.form_submit_button(label='Submit')
 
-# conn.commit()
+conn.commit()
 conn.close()
