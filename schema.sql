@@ -155,3 +155,30 @@ create table belongs_to (
 --     after insert on product
 --     for each row
 --     execute procedure insertFun();
+create or replace function insertIntoCart() returns trigger as
+$BODY$
+BEGIN
+insert into cart(user_id) values(new.user_id);
+RETURN new;
+END;
+$BODY$
+language plpgsql;
+
+create trigger tig_insert_user_cart
+after insert on users
+for each row
+execute procedure insertIntoCart();
+
+create or replace function deleteFromCartItem() returns trigger as
+$BODY$
+BEGIN
+delete from cart_item where cart_item.cart_id = new.cart_id;
+RETURN new;
+END;
+$BODY$
+language plpgsql;
+
+create trigger trig_delete_cart_item
+after insert on payment
+for each row
+execute procedure deleteFromCartItem();
