@@ -76,11 +76,14 @@ elif(choice == "Gamer"):
             option = st.selectbox(
             'What do you want to update?',
             ('None','First name', 'Last name', 'E-mail','Phone','Address'))
-            if(option != 'None'):
-                updated_val = st.text_input(label='Enter new value')
-                if(option == 'Address'):
-                    address_num = st.text_input(label='Enter address which is to be updated')
+            updated_val = st.text_input(label='Enter new value')
+            address_num = st.text_input(label='Enter address which is to be updated')
+            
             update_button = st.form_submit_button(label='Submit')
+        
+        st.table(dbcommands.select_from_table(cursor, "users"))
+        st.table(dbcommands.select_from_table(cursor, "address"))
+
         if(update_button):
             if(option == "Address"):
 
@@ -311,11 +314,11 @@ elif(choice == "Manager"):
     "Update Product Supplier Details",
     "Insert Product Details",
     "Update Product Details",
+    "Delete a product",
     "Insert Offer",
     "Delete Offer",
     "Insert contest details",
-    "Delete contest",
-    "Delete a product"
+    "Delete contest"
     ))
 
     if(operation == "Execute any command as manager"):
@@ -353,8 +356,8 @@ elif(choice == "Manager"):
             option = st.selectbox(
             'What do you want to update?',
             ('None','Supplier Name', 'Supplier Phone', 'Country of origin'))
-            if(option != 'None'):
-                updated_val = st.text_input(label='Enter new value')
+            
+            updated_val = st.text_input(label='Enter new value')
             update_button = st.form_submit_button(label='Submit')
         
         st.table(dbcommands.select_from_table(cursor, "product_supplier"))
@@ -426,6 +429,7 @@ elif(choice == "Manager"):
                 
                 st.success(f"Your product_id is : {product_id}")
         st.table(dbcommands.select_from_table(cursor, "product_supplier"))
+        st.table(dbcommands.select_from_table(cursor, "offers"))
 
     elif(operation == "Update Product Details"):
         
@@ -506,6 +510,8 @@ elif(choice == "Manager"):
             contest_id = dbcommands.insert_into_table(cursor, "contest", column_names, values, 'contest_id')
             
             st.success(f"Your contest_id is : {contest_id}")
+        
+        st.table(dbcommands.select_from_table(cursor, "game"))
 
     elif(operation == "Insert Offer"):
 
