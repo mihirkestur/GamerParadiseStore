@@ -5,7 +5,7 @@ from streamlit.type_util import pyarrow_table_to_bytes
 st.set_page_config(page_title='GamerParadiseStore', layout = 'wide', initial_sidebar_state = 'auto')
 import dbcommands
 import psycopg2
-
+import decimal
 choice = st.radio("Who are you?", (
     "Developer",
     "Gamer",
@@ -99,39 +99,91 @@ elif(choice == "Gamer"):
             st.success(f"Complaint registered, your complaint ID is {comp_id}")
     
     elif(operation == "Purchase"):
+        one = decimal.Decimal(1)
+        cursor.execute("""select a.product_id, accessory_name, length, breadth, width, sub_category, price
+                          from accessory a, product p
+                          where a.product_id = p.product_id"""
+               )
+        result = cursor.fetchall()
+        result = [tuple(float(item) if(type(item) == type(one)) else item for item in t) for t in result]
+        result = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in result]
+        st.table(result)
+
+        cursor.execute("""select g.product_id, game_name, genre, specifications, platform, release_date, price
+                          from game g, product p
+                          where g.product_id = p.product_id"""
+               )
+        result = cursor.fetchall()
+        result = [tuple(float(item) if(type(item) == type(one)) else item for item in t) for t in result]
+        result = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in result]
+        st.table(result)
+
         user_id = st.text_input(label='User id')
 
         if(st.button(label="View my cart")):
             # NOTE: user_id should be cart_id. Needs to be obtained
-            command = f"""select cart_id from cart where user_id = {user_id}"""
-            cursor.execute(command)
-            cart_id = cursor.fetchall()[0][0]
-            st.table(dbcommands.select_from_table(cursor, "cart_item", "*", f"where cart_id = {cart_id}"))
+            if user_id == '': 
+                st.error("Please Enter UserID")
+            else:
+                command = f"""select cart_id from cart where user_id = {user_id}"""
+                cursor.execute(command)
+                cart_id = cursor.fetchall()[0][0]
+                cursor.execute(f"""
+                    select p.product_id, game_name as name, price * quantity_wished as cost, quantity_wished as QTY from 
+                    product p, cart_item c, game g
+                    where p.product_id = c.product_id and p.product_id = g.product_id and cart_id = {cart_id}
+
+                    union
+
+                    select p.product_id, accessory_name as name, price * quantity_wished as cost, quantity_wished as QTY from 
+                    product p, cart_item c, accessory a
+                    where p.product_id = c.product_id and p.product_id = a.product_id and cart_id = {cart_id};
+                """)
+                cart_contents = cursor.fetchall()
+                cart_contents = [tuple(float(item) if(type(item) == type(one)) else item for item in t) for t in cart_contents]
+                cart_contents = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in cart_contents]
+                st.table(cart_contents)
 
         with st.form(key='Cart item'):
             product_id = st.text_input(label='Product id')
-            date_add = st.text_input(label='Date Added')
+            date_add = st.text_input(label='Date Added') ## TODO: Generate automatically
             quant_wish = st.text_input(label='Quantity wished')
             add_to_cart = st.form_submit_button(label='Add to cart')
 
         if(add_to_cart):
-            command = f"""select cart_id from cart where user_id = {user_id}"""
-            cursor.execute(command)
-            cart_id = cursor.fetchall()[0][0]
-            values = f"({product_id},{cart_id},'{date_add}','{quant_wish}')"
-            column_names = '(Product_ID, Cart_ID, Date_Added, Quantity_Wished)'
-            dbcommands.insert_into_table(cursor,"cart_item",column_names,values,'cart_id')
-            command2 = f"""select * from cart_item where cart_id = {cart_id}"""
-            st.success(f"Successfully added to cart!")
-            #st.table(dbcommands.execute_any_command(cursor,command2))
+            if user_id:
+                command = f"""select cart_id from cart where user_id = {user_id}"""
+                cursor.execute(command)
+                cart_id = cursor.fetchall()[0][0]
+                if product_id and cart_id and date_add and quant_wish:
+                    values = f"({product_id},{cart_id},'{date_add}','{quant_wish}')"
+                    column_names = '(Product_ID, Cart_ID, Date_Added, Quantity_Wished)'
+                    dbcommands.insert_into_table(cursor,"cart_item",column_names,values,'cart_id')
+                    command2 = f"""select * from cart_item where cart_id = {cart_id}"""
+                    st.success(f"Successfully added to cart!")
+                    #st.table(dbcommands.execute_any_command(cursor,command2))
+                else: st.error("Please fill all the details")
+            else: st.error("Please enter UserID")
         
         with st.form(key='remove from cart'):
             product_id = st.text_input(label='Product id')
+            num_item = st.text_input(label = 'count')
             remove_from_cart = st.form_submit_button(label='Remove from cart')
         
         if(remove_from_cart):
-            dbcommands.delete_entry_from_table(cursor, "cart_item", "product_id", product_id)
-            st.success(f"Successfully removed from cart!")
+            count = int(num_item)
+            command = f"""select cart_id from cart where user_id = {user_id}"""
+            cursor.execute(command)
+            cart_id = cursor.fetchall()[0][0]
+            cursor.execute(f"select quantity_wished from cart_item where cart_id = {cart_id}")
+            cur_count = cursor.fetchall()[0][0]
+
+            if cur_count == count:
+                dbcommands.delete_entry_from_table(cursor, "cart_item", "product_id", product_id)
+                st.success(f"Successfully removed from cart!")
+            else:
+                dbcommands.update_table(cursor, "cart_item", f"quantity_wished = '{cur_count - count}'", f"cart_id = {cart_id} and product_id = {product_id}")
+                st.success(f"Successfully removed from cart!") # TODO: Not working??
 
         if(st.button(label="View Details")):
             #select * from product as p left outer join game as g on p.product_id = g.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id
@@ -197,9 +249,10 @@ elif(choice == "Manager"):
     "Update Product Supplier Details",
     "Insert Product Details",
     "Update Product Details",
-
     "Insert Offer",
+    "Delete Offer",
     "Insert contest details",
+    "Delete contest",
     "Delete a product"
     ))
 
@@ -399,5 +452,22 @@ elif(choice == "Manager"):
             submit_button = st.form_submit_button(label='Delete product')
         if(submit_button):
             st.info(dbcommands.delete_entry_from_table(cursor, "product", "product_id", product_id))
+    
+    elif(operation == "Delete Offer"):
+        with st.form(key='delete offer'):
+            offer_id = st.text_input(label='offer id')
+            st.table(dbcommands.select_from_table(cursor, "offers"))
+            submit_button = st.form_submit_button(label='Delete offer')
+        if(submit_button):
+            st.info(dbcommands.delete_entry_from_table(cursor, "offers", "offer_id", offer_id))
+
+    elif(operation == "Delete contest"):
+        with st.form(key='delete contest'):
+            contest_id = st.text_input(label='contest id')
+            st.table(dbcommands.select_from_table(cursor, "contest"))
+            submit_button = st.form_submit_button(label='Delete contest')
+        if(submit_button):
+            st.info(dbcommands.delete_entry_from_table(cursor, "contest", "contest_id", contest_id))
+
     conn.commit()
     conn.close()
