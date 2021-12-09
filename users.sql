@@ -4,7 +4,7 @@ drop user customer;
 -- inventory_manager
 create user manager with encrypted password 'manager';
 -- product, product_supplier, product_offers, offers, accessory, game, contest
-grant all on product, product_supplier, product_offers, offers, accessory, game, contest to inventory_manager;
+grant all on product, product_supplier, product_offers, offers, accessory, game, contest to manager;
 
 -- user (i.e. "player")
 create user customer with encrypted password 'customer';

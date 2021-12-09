@@ -27,10 +27,11 @@ if(choice == "Developer"):
     conn.close()
 
 elif(choice == "Gamer"):
-    conn = psycopg2.connect(**st.secrets["postgres"])
+    conn = psycopg2.connect(**st.secrets["customer"])
     cursor = conn.cursor()
 
     operation = st.radio("What do you want to do?", (
+    "Execute any command as customer",
     "Insert Gamer Info",
     "Update Gamer Info",
     "Delete Gamer Info",
@@ -38,7 +39,18 @@ elif(choice == "Gamer"):
     "Participate in Contest",
     "Register Complaint"
     ))
-    if(operation == "Insert Gamer Info"):
+
+    if(operation == "Execute any command as customer"):
+        command = st.text_area(label="Enter command")
+        execute = st.button(label="Execute")
+        if(command != "" and execute):  
+            try:
+                st.table(dbcommands.execute_any_command(cursor, command))
+            except Exception as e:
+                st.write("Not a valid command:")
+                st.error(f"{e}")
+
+    elif(operation == "Insert Gamer Info"):
         with st.form(key='Users'):
             first_name = st.text_input(label='First name')
             last_name = st.text_input(label='Last name')
@@ -188,8 +200,8 @@ elif(choice == "Gamer"):
         if(st.button(label="View Details")):
             #select * from product as p left outer join game as g on p.product_id = g.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id
             #select * from product as p left outer join accessory as g on p.product_id = g.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id
-            st.table(dbcommands.execute_any_command(cursor, "select p.product_id, price, rating, description, type, game_name,  genre, specifications, platform, release_date, offer_description, end_time from product as p left outer join game as g on p.product_id = g.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id"))
-            st.table(dbcommands.execute_any_command(cursor, "select p.product_id, price, rating, description, type, accessory_name,  length, breadth, width, quantity, sub_category, offer_description, end_time  from product as p left outer join accessory as g on p.product_id = g.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id"))
+            st.table(dbcommands.execute_any_command(cursor, "select p.product_id, price, rating, description, type, game_name,  genre, specifications, platform, release_date, accessory_name,  length, breadth, width, quantity, sub_category, offer_description, end_time from product as p left outer join game as g on p.product_id = g.product_id left outer join accessory as a on a.product_id = p.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id"))
+            #st.table(dbcommands.execute_any_command(cursor, "select p.product_id, price, rating, description, type, accessory_name,  length, breadth, width, quantity, sub_category, offer_description, end_time  from product as p left outer join accessory as g on p.product_id = g.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id"))
             st.table(dbcommands.select_from_table(cursor, "product"))
             st.table(dbcommands.select_from_table(cursor, "game"))
             st.table(dbcommands.select_from_table(cursor, "accessory"))
@@ -239,12 +251,11 @@ elif(choice == "Gamer"):
 
 
 elif(choice == "Manager"):
-
-    conn = psycopg2.connect(**st.secrets["postgres"])
+    conn = psycopg2.connect(**st.secrets["manager"])
     cursor = conn.cursor()
 
-
     operation = st.radio("Select operation", (
+    "Execute any command as manager",
     "Insert Product Supplier Details",
     "Update Product Supplier Details",
     "Insert Product Details",
@@ -256,7 +267,17 @@ elif(choice == "Manager"):
     "Delete a product"
     ))
 
-    if(operation == "Insert Product Supplier Details"):
+    if(operation == "Execute any command as manager"):
+        command = st.text_area(label="Enter command")
+        execute = st.button(label="Execute")
+        if(command != "" and execute):  
+            try:
+                st.table(dbcommands.execute_any_command(cursor, command))
+            except Exception as e:
+                st.write("Not a valid command:")
+                st.error(f"{e}")
+
+    elif(operation == "Insert Product Supplier Details"):
         # product_supplier
         with st.form(key="supplier"):
             sup_name = st.text_input(label='Supplier Name')
