@@ -3,18 +3,19 @@ create database gamer_paradise;
 \c gamer_paradise
 
 create domain email as text check(value ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$');
+create domain phno as text check(value ~ '^[0-9]{10}$');
 
 create table users (
     user_id int generated always as identity primary key,                       --PK
     first_name char(10), 
     last_name char(10), 
     e_mail email, 
-    phone char(10)
+    phone phno
 );
 
 create table product_supplier (
     supplier_id int generated always as identity primary key,                   --PK
-    supplier_phone char(10),
+    supplier_phone phno,
     e_mail email,
     supplier_name varchar(20),
     country_of_origin char(30)
