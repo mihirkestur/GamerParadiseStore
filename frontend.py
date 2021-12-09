@@ -109,13 +109,16 @@ elif(choice == "Gamer"):
             submit_button = st.form_submit_button(label='Submit')
 
         if (submit_button):
-            values = f"('{user_id}','{comp_desc}','{comp_date}')"
-            column_names = '(user_id, complaint_description, complaint_date)'
-            comp_id = dbcommands.insert_into_table(cursor,'complaint',column_names,values,'complaint_id')
-            st.success(f"Complaint registered, your complaint ID is {comp_id}")
+            if user_id:
+                values = f"('{user_id}','{comp_desc}','{comp_date}')"
+                column_names = '(user_id, complaint_description, complaint_date)'
+                comp_id = dbcommands.insert_into_table(cursor,'complaint',column_names,values,'complaint_id')
+                st.success(f"Complaint registered, your complaint ID is {comp_id}")
+            else: st.error("Please enter User ID")
 
         if(st.button(label="View current complaints")):
-            st.table(dbcommands.select_from_table(cursor, "complaint", '*', f"where user_id = {user_id}"))
+            if user_id: st.table(dbcommands.select_from_table(cursor, "complaint", '*', f"where user_id = {user_id}"))
+            else: st.error("Please enter User ID")
     
     elif(operation == "Purchase"):
         one = decimal.Decimal(1)
@@ -126,6 +129,7 @@ elif(choice == "Gamer"):
         result = cursor.fetchall()
         result = [tuple(float(item) if(type(item) == type(one)) else item for item in t) for t in result]
         result = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in result]
+        st.write("Accessories")
         st.table(result)
 
         cursor.execute("""select g.product_id, game_name, genre, specifications, platform, release_date, price
@@ -135,6 +139,7 @@ elif(choice == "Gamer"):
         result = cursor.fetchall()
         result = [tuple(float(item) if(type(item) == type(one)) else item for item in t) for t in result]
         result = [dict((cursor.description[i][0], value) for i, value in enumerate(row)) for row in result]
+        st.write("Games")
         st.table(result)
 
         user_id = st.text_input(label='User id')
@@ -176,10 +181,15 @@ elif(choice == "Gamer"):
                 cart_id = cursor.fetchall()[0][0]
                 if product_id and cart_id and date_add and quant_wish:
                     values = f"({product_id},{cart_id},'{date_add}','{quant_wish}')"
-                    column_names = '(Product_ID, Cart_ID, Date_Added, Quantity_Wished)'
-                    dbcommands.insert_into_table(cursor,"cart_item",column_names,values,'cart_id')
-                    command2 = f"""select * from cart_item where cart_id = {cart_id}"""
-                    st.success(f"Successfully added to cart!")
+                    try:
+                        column_names = '(Product_ID, Cart_ID, Date_Added, Quantity_Wished)'
+                        dbcommands.insert_into_table(cursor,"cart_item",column_names,values,'cart_id')
+                        command2 = f"""select * from cart_item where cart_id = {cart_id}"""
+                        st.success(f"Successfully added to cart!")
+                    except:
+                        conn.rollback()
+                        dbcommands.update_table(cursor, "cart_item", f"quantity_wished = quantity_wished + {quant_wish}", f"cart_id = {cart_id} and product_id = {product_id}")
+                        st.success(f"Successfully added to cart!")
                     #st.table(dbcommands.execute_any_command(cursor,command2))
                 else: st.error("Please fill all the details")
             else: st.error("Please enter UserID")
@@ -231,7 +241,8 @@ elif(choice == "Gamer"):
 
             command3 = f"""select sum(p.price*c.quantity_wished) from product as p,cart_item as c where p.product_id = c.product_id and c.cart_id = {cart_id}"""
             amt = dbcommands.execute_any_command(cursor,command3)
-            amnt_paid = amt[0][0]
+        
+            amnt_paid = amt[0]["sum"]
             values = f"('{cart_id}','{pay_mode}','{pay_date}',{amnt_paid})"
             column_names = '(cart_id, payment_mode, payment_date, amount_paid)'
             payment_id = dbcommands.insert_into_table(cursor,'payment',column_names,values,'payment_id')
@@ -239,21 +250,52 @@ elif(choice == "Gamer"):
             st.table(dbcommands.select_from_table(cursor, "payment", "*", f"where payment_id = {payment_id}"))
 
     elif(operation == "Participate in Contest"):
-        with st.form(key='Participates/Team/Belongs_to'):
+        user_id = st.text_input(label='User id')
+        if(st.button(label="View current team and contests")):
+            if user_id: 
+                try:
+                    res = ", ".join([ str(i['team_id']) for i in dbcommands.select_from_table(cursor, "belongs_to", 'team_id', "where user_id = " + user_id)])
+                    st.info(f'You are a part of team {res}')
+                    st.write("Contests you are participating in")
+                    st.table(dbcommands.execute_any_command(cursor, f"select * from participates where team_id in ({res})"))
+                except: st.info("You don't belong to a team yet")
+
+            else: st.error("Please enter User ID")
+        
+        with st.form(key='Join Team'):
+            st.write("Choose a team to join")
             # points gained, prize won, total points
-            #user_id = st.text_input(label='User id')
-            contest_id = st.text_input(label='Contest Id')
+            st.write("Available Teams")
+            st.table(dbcommands.select_from_table(cursor, "team"))
             team_id = st.text_input(label='Team Id')
-            submit_button = st.form_submit_button(label='Submit')
+            join_team = st.form_submit_button(label='Join Team')
         
-        if(submit_button):
-            values = f"('{contest_id}','{team_id}',0,0)"
-            column_names = '(contest_id, team_id, points_gained, prize_won)'
-            c_id = dbcommands.insert_into_table(cursor,'participates',column_names,values, 'contest_id')
-            st.success(f"team {team_id} added to contest {c_id}")
-        
+        if(join_team):
+            values = f"({user_id},{team_id})"
+            column_names = ''
+            t_id = dbcommands.insert_into_table(cursor,'belongs_to',column_names,values, 'team_id')
+            st.success(f"You (user id : {user_id}) have joined to team {t_id}")
+
+        st.write("Available contests")
         st.table(dbcommands.select_from_table(cursor, "contest"))
-        st.table(dbcommands.select_from_table(cursor, "team"))
+       
+        with st.form(key='Participates/Team/Belongs_to'):
+            contest_id = st.text_input(label='Contest Id')
+            team_id_contest = st.text_input(label='Team Id')
+            join_contest = st.form_submit_button(label='Join Contest')
+        
+        if(join_contest):
+            part_of = { str(i['team_id']) for i in dbcommands.select_from_table(cursor, "belongs_to", 'team_id', "where user_id = " + user_id)}
+            if str(team_id_contest) not in part_of:
+                st.error(f"You don't belong to team {team_id}")
+                st.error(part_of)
+            else:
+                values = f"('{contest_id}','{team_id}',0,0)"
+                column_names = '(contest_id, team_id, points_gained, prize_won)'
+                c_id = dbcommands.insert_into_table(cursor,'participates',column_names,values, 'contest_id')
+                st.success(f"team {team_id} added to contest {c_id}")
+        
+
     conn.commit()
     conn.close()
 

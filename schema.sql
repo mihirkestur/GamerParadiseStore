@@ -145,16 +145,6 @@ create table belongs_to (
     primary key(user_id, team_id)
 );
 
--- create or replace function insertFun() returns trigger as
---     $body$
---     return new.product_id
---     $$
---     language plpgsql
-
--- create trigger insertTrig
---     after insert on product
---     for each row
---     execute procedure insertFun();
 create or replace function insertIntoCart() returns trigger as
 $BODY$
 BEGIN
