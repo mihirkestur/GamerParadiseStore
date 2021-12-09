@@ -6,6 +6,7 @@ st.set_page_config(page_title='GamerParadiseStore', layout = 'wide', initial_sid
 import dbcommands
 import psycopg2
 import decimal
+import datetime
 choice = st.radio("Who are you?", (
     "Developer",
     "Gamer",
@@ -104,7 +105,7 @@ elif(choice == "Gamer"):
         with st.form(key='complaint'):
             # user_id = st.text_input(label='User id')
             comp_desc = st.text_input(label='Complaint Description')
-            comp_date = st.text_input(label='Complaint Date')
+            comp_date = datetime.datetime.now().date() #st.text_input(label='Complaint Date')
             submit_button = st.form_submit_button(label='Submit')
 
         if (submit_button):
@@ -164,7 +165,7 @@ elif(choice == "Gamer"):
 
         with st.form(key='Cart item'):
             product_id = st.text_input(label='Product id')
-            date_add = st.text_input(label='Date Added') ## TODO: Generate automatically
+            date_add = datetime.datetime.now().date() #st.text_input(label='Date Added') ## TODO: Generate automatically
             quant_wish = st.text_input(label='Quantity wished')
             add_to_cart = st.form_submit_button(label='Add to cart')
 
@@ -220,7 +221,7 @@ elif(choice == "Gamer"):
         with st.form(key='Cart/Payment'):
             user_id = st.text_input(label='Confirm User id')
             pay_mode = st.text_input(label='Payment Mode')
-            pay_date = st.text_input(label='Payment Date')
+            pay_date = datetime.datetime.now().date()#st.text_input(label='Payment Date')
             buy = st.form_submit_button(label='Make payment on cart')
         if(buy):
             # insert to transaction
@@ -298,6 +299,8 @@ elif(choice == "Manager"):
             column_names = '(supplier_phone, supplier_name, country_of_origin)'
             supplier_id = dbcommands.insert_into_table(cursor, "product_supplier", column_names, values, 'supplier_id')
             st.success(f"Your supplier id is : {supplier_id}")
+        
+            st.table(dbcommands.select_from_table(cursor, "product_supplier"))
 
     
     elif(operation == "Update Product Supplier Details"):
@@ -315,7 +318,7 @@ elif(choice == "Manager"):
         st.table(dbcommands.select_from_table(cursor, "product_supplier"))
         
         if(update_button):
-            print(col_name_dict[option])
+            #print(col_name_dict[option])
             dbcommands.update_table(cursor, "product_supplier", f"{col_name_dict[option]} = '{updated_val}'", f"supplier_id = {supplier_id}")
             st.success("Updated successfully!")
 

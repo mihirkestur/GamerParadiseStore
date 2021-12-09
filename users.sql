@@ -9,5 +9,5 @@ grant all on product, product_supplier, product_offers, offers, accessory, game,
 -- user (i.e. "player")
 create user customer with encrypted password 'customer';
 
-grant insert, update, select, delete on team, belongs_to, participates, address, cart, cart_item, payment, users, complaint to customer;
+grant insert, update, select, delete on cart, team, belongs_to, participates, address, cart_item, payment, users, complaint to customer;
 grant select on product, game, contest, product_supplier, accessory, product_offers, offers to customer;
