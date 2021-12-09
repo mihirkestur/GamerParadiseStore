@@ -5,10 +5,6 @@ from streamlit.type_util import pyarrow_table_to_bytes
 st.set_page_config(page_title='GamerParadiseStore', layout = 'wide', initial_sidebar_state = 'auto')
 import dbcommands
 import psycopg2
-conn = psycopg2.connect(**st.secrets["postgres"])
-import pandas as pd
-import decimal
-cursor = conn.cursor()
 
 choice = st.radio("Who are you?", (
     "Developer",
@@ -17,6 +13,8 @@ choice = st.radio("Who are you?", (
 ))
 
 if(choice == "Developer"):
+    conn = psycopg2.connect(**st.secrets["postgres"])
+    cursor = conn.cursor()
     command = st.text_area(label="Enter command")
     execute = st.button(label="Execute")
     if(command != "" and execute):  
@@ -25,8 +23,13 @@ if(choice == "Developer"):
         except Exception as e:
             st.write("Not a valid command:")
             st.error(f"{e}")
+    conn.commit()
+    conn.close()
 
 elif(choice == "Gamer"):
+    conn = psycopg2.connect(**st.secrets["postgres"])
+    cursor = conn.cursor()
+
     operation = st.radio("What do you want to do?", (
     "Insert Gamer Info",
     "Update Gamer Info",
@@ -178,11 +181,16 @@ elif(choice == "Gamer"):
         
         st.table(dbcommands.select_from_table(cursor, "contest"))
         st.table(dbcommands.select_from_table(cursor, "team"))
-
+    conn.commit()
+    conn.close()
 
 
 
 elif(choice == "Manager"):
+
+    conn = psycopg2.connect(**st.secrets["postgres"])
+    cursor = conn.cursor()
+
 
     operation = st.radio("Select operation", (
     "Insert Product Supplier Details",
@@ -391,5 +399,5 @@ elif(choice == "Manager"):
             submit_button = st.form_submit_button(label='Delete product')
         if(submit_button):
             st.info(dbcommands.delete_entry_from_table(cursor, "product", "product_id", product_id))
-conn.commit()
-conn.close()
+    conn.commit()
+    conn.close()

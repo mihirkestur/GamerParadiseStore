@@ -1,8 +1,8 @@
-drop user inventory_manager;
+drop user manager;
 drop user customer;
 
 -- inventory_manager
-create user inventory_manager with encrypted password 'manager';
+create user manager with encrypted password 'manager';
 -- product, product_supplier, product_offers, offers, accessory, game, contest
 grant all on product, product_supplier, product_offers, offers, accessory, game, contest to inventory_manager;
 
