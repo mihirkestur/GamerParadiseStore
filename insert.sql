@@ -19,6 +19,8 @@ Create view and give permission to the user (in case we need to give a subset of
 Use triggers for product id going to games and accessories
 */
 
+\c gamer_paradise
+
 insert into users(first_name, last_name, e_mail, phone) values ('Fame1', 'Lname1', 'mohalk@gmail.com', 7825780817);
 insert into users(first_name, last_name, e_mail, phone) values ('Fame2', 'Lname2', 'mohalk@gmail.com', 7825780817);
 insert into users(first_name, last_name, e_mail, phone) values ('Fame3', 'Lname3', 'mohalk@gmail.com', 7825780817);

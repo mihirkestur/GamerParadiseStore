@@ -58,7 +58,7 @@ create table cart (
     user_id int references users(user_id) on delete cascade                     --FK
 );
 
-create table complaint (
+create table complaint ( -- TODO: Maybe add a status column as well?
     complaint_id int generated always as identity primary key,                  --PK
     user_id int references users(user_id) on delete set null,                   --FK
     complaint_description varchar(50),

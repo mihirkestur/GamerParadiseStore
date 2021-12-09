@@ -99,16 +99,22 @@ elif(choice == "Gamer"):
             st.info(dbcommands.delete_entry_from_table(cursor, "users", "user_id", user_id))
     
     elif(operation == "Register Complaint"):
+        user_id = st.text_input("User id")
+        
         with st.form(key='complaint'):
-            user_id = st.text_input(label='User id')
+            # user_id = st.text_input(label='User id')
             comp_desc = st.text_input(label='Complaint Description')
             comp_date = st.text_input(label='Complaint Date')
             submit_button = st.form_submit_button(label='Submit')
+
         if (submit_button):
             values = f"('{user_id}','{comp_desc}','{comp_date}')"
             column_names = '(user_id, complaint_description, complaint_date)'
             comp_id = dbcommands.insert_into_table(cursor,'complaint',column_names,values,'complaint_id')
             st.success(f"Complaint registered, your complaint ID is {comp_id}")
+
+        if(st.button(label="View current complaints")):
+            st.table(dbcommands.select_from_table(cursor, "complaint", '*', f"where user_id = {user_id}"))
     
     elif(operation == "Purchase"):
         one = decimal.Decimal(1)
@@ -193,9 +199,11 @@ elif(choice == "Gamer"):
             if cur_count == count:
                 dbcommands.delete_entry_from_table(cursor, "cart_item", "product_id", product_id)
                 st.success(f"Successfully removed from cart!")
+            elif cur_count < count:
+                st.error(f"Cannot remove more than {cur_count} items")
             else:
                 dbcommands.update_table(cursor, "cart_item", f"quantity_wished = '{cur_count - count}'", f"cart_id = {cart_id} and product_id = {product_id}")
-                st.success(f"Successfully removed from cart!") # TODO: Not working??
+                st.success(f"Successfully removed from cart!")
 
         if(st.button(label="View Details")):
             #select * from product as p left outer join game as g on p.product_id = g.product_id left outer join product_offers as po on po.product_id = p.product_id left outer join offers as o on o.offer_id = po.offer_id
